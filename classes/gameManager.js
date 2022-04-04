@@ -24,15 +24,6 @@ export class GameManager {
 
         this.lastTimeStamp = Date.now();
 
-        this.platforms = [];
-        this.platforms.push(new Rectangle(0, 500, 1500, 20, "blue"));
-
-        this.drawTool = new DrawTool(canvas);
-        this.drawTool.setup(this);
-
-        this.player = new PurpleSquare(1, 6, 10);
-        this.respawnPlayer();
-
         this.update();
     }
 
@@ -67,7 +58,17 @@ export class GameManager {
     }
 
     resizeCanvas() {
-        this.canvas.width = this.rect.width;
-        this.canvas.height = this.rect.height;
+        const size = this.rect;
+        this.canvas.width = sizet.width;
+        this.canvas.height = size.height;
+    }
+
+    clear() {
+        const size = this.rect;
+        this.ctx.clearRect(0, 0, size.width, size.height);
+    }
+
+    get rect() {
+        return this.canvas.getBoundingClientRect();
     }
 }

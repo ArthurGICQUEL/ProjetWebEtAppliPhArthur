@@ -1,4 +1,4 @@
-export class HeightMap {
+export class Heightmap {
   constructor() {
     this.pixels = [[]];
   }

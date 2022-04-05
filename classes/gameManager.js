@@ -11,10 +11,10 @@ export class GameManager {
     this.ctx = canvas.getContext("2d");
     this.resizeCanvas();
     window.addEventListener("resize", (e) => this.resizeCanvas());
-    
-    this.mousePosition = {x: 0, y: 0};
+
+    this.mousePosition = { x: 0, y: 0 };
     this.canvas.addEventListener("mousemove", (e) => {
-        this.mousePosition = this.getMousePosition(e.clientX, e.clientY);
+      this.mousePosition = this.getMousePosition(e.clientX, e.clientY);
     });
 
     this.lastBrushArea = null;
@@ -30,6 +30,7 @@ export class GameManager {
     }
 
     this.heightmap = new Heightmap(200, 300, 10);
+    this.heightmap.addWater(50, 50, 10, 2);
     this.heightmap.display(this.ctx);
 
     this.brush = new Brush(this.heightmap, "black", 5);
@@ -43,23 +44,29 @@ export class GameManager {
     const deltaTime = (Date.now() - this.lastTimeStamp) / 1000;
     this.lastTimeStamp = Date.now();
 
+    this.heightmap.display(this.ctx);
+
     this.clear(this.lastBrushArea);
-    this.lastBrushArea = this.brush.preview(this.ctx, this.mousePosition.x, this.mousePosition.y);
+    this.lastBrushArea = this.brush.preview(
+      this.ctx,
+      this.mousePosition.x,
+      this.mousePosition.y
+    );
 
     requestAnimationFrame(() => this.update());
   }
 
   /**
-   * 
-   * @param {number} clientX 
+   *
+   * @param {number} clientX
    * @param {number} clientY
    */
   getMousePosition(clientX, clientY) {
-      const size = this.rect;
-      return {
-          x: clientX - size.left,
-          y: clientY - size.top
-      };
+    const size = this.rect;
+    return {
+      x: clientX - size.left,
+      y: clientY - size.top,
+    };
   }
 
   resizeCanvas() {
@@ -69,7 +76,7 @@ export class GameManager {
   }
 
   clear(area) {
-    if(area != null) {
+    if (area != null) {
       this.ctx.clearRect(area.x, area.y, area.w, area.h);
     }
   }

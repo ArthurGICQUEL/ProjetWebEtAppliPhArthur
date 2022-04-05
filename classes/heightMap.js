@@ -68,4 +68,9 @@ export class Heightmap {
   checkCoord(x, y) {
     return x <= this.width && x >= 0 && y <= this.height && y >= 0;
   }
+
+  saveMap() {
+    localStorage.setItem("heightmap", JSON.stringify(this.pixels));
+    console.log(localStorage.getItem("heightmap"));
+  }
 }

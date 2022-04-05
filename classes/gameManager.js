@@ -81,4 +81,8 @@ export class GameManager {
   get rect() {
     return this.canvas.getBoundingClientRect();
   }
+
+  saveMap() {
+    this.heightmap.saveMap();
+  }
 }

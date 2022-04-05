@@ -1,3 +1,3 @@
-import { GameManager } from "./GameManager.js";
+import { GameManager } from "./classes/gameManager.js";
 
 const gm = new GameManager(document.querySelector("canvas"));

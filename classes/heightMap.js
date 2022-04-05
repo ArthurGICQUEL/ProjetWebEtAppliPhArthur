@@ -7,9 +7,14 @@ export class Heightmap {
     this.height = height * this.pixelSize;
     this.width = width * this.pixelSize;
     this.maxDepth = maxDepth;
-    this.pixels = Array.from(Array(width), () =>
-      Array(height).fill({ terrain: this.maxDepth / 2, water: 0 })
-    );
+    this.pixels = [];
+    for (let x = 0; x < width; x++) {
+      const col = [];
+      for (let y = 0; y < height; y++) {
+        col.push({ terrain: this.maxDepth / 2, water: 0 });
+      }
+      this.pixels.push(col);
+    }
   }
 
   /**
@@ -40,7 +45,7 @@ export class Heightmap {
    *
    * @param {CanvasRenderingContext2D} ctx
    */
-  display(ctx, x, y, w, h) {
+  displayLimited(ctx, x, y, w, h) {
     for (let i = x; i < x + w; i++) {
       for (let j = y; j < y + h; j++) {
         ctx.fillStyle =
@@ -61,7 +66,7 @@ export class Heightmap {
     }
   }
 
-  waterBehavior() {
+  /*waterBehavior() {
     for (let x = 0; x < this.pixels.length; x++) {
       for (let y = 0; y < this.pixels[x].length; y++) {
         let lowerPoints = this.getLowerPoints();
@@ -70,13 +75,13 @@ export class Heightmap {
         pixels[x][y].water--;
       }
     }
-  }
+  }*/
 
   addWater(x, y, radius, depth) {
-    for (let i = -radius; i < radius; i++) {
-      for (let j = -radius; j < radius; j++) {
+    for (let i = -radius; i <= radius; i++) {
+      for (let j = -radius; j <= radius; j++) {
         if (i * i + j * j <= radius * radius) {
-          this.pixels[x + i][y + j].water += depth;
+          this.pixels[x + i][y + j].water = depth;
         }
       }
     }

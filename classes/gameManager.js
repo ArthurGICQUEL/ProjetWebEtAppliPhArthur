@@ -30,8 +30,8 @@ export class GameManager {
     }
 
     this.heightmap = new Heightmap(200, 300, 10);
-    this.heightmap.addWater(50, 50, 10, 2);
-    this.heightmap.display(this.ctx);
+    this.heightmap.addWater(50, 50, 20, 2);
+    console.log(this.heightmap);
 
     this.brush = new Brush(this.heightmap, "black", 5);
     this.brush.radius = 50;
@@ -44,9 +44,9 @@ export class GameManager {
     const deltaTime = (Date.now() - this.lastTimeStamp) / 1000;
     this.lastTimeStamp = Date.now();
 
-    this.heightmap.display(this.ctx);
-
     this.clear(this.lastBrushArea);
+
+    this.heightmap.display(this.ctx);
     this.lastBrushArea = this.brush.preview(
       this.ctx,
       this.mousePosition.x,

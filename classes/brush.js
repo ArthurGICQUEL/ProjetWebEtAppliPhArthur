@@ -49,7 +49,7 @@ export class Brush {
     ctx.beginPath();
     ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
     ctx.stroke();
-    return {x: x - (this.radius + this.lineWidth * 0.5), y: y - (this.radius + this.lineWidth * 0.5), w: this.radius * 2 + this.lineWidth, h: this.radius * 2 + this.lineWidth};
+    return {x: x - (this.radius + this.lineWidth * 0.5 + 1), y: y - (this.radius + this.lineWidth * 0.5 + 1), w: this.radius * 2 + this.lineWidth + 2, h: this.radius * 2 + this.lineWidth + 2};
   }
 
   apply() {

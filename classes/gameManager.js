@@ -10,9 +10,12 @@ export class GameManager {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.resizeCanvas();
-    window.addEventListener("resize", (e) => this.resizeCanvas());
+    window.addEventListener("resize", (e) => {
+      this.resizeCanvas();
+      //this.heightmap.display(this.ctx);
+    });
 
-    this.mousePosition = { x: 0, y: 0 };
+    this.mousePosition = null;
     this.canvas.addEventListener("mousemove", (e) => {
       this.mousePosition = this.getMousePosition(e.clientX, e.clientY);
     });
@@ -29,8 +32,9 @@ export class GameManager {
       });
     }
 
-    this.heightmap = new Heightmap(200, 300, 10);
-    this.heightmap.addWater(50, 50, 10, 2);
+    const size = this.rect;
+    this.heightmap = new Heightmap(size.height, size.width, 10);
+    //this.heightmap.addWater(50, 50, 10, 2);
     this.heightmap.display(this.ctx);
 
     this.brush = new Brush(this.heightmap, "black", 5);
@@ -44,14 +48,18 @@ export class GameManager {
     const deltaTime = (Date.now() - this.lastTimeStamp) / 1000;
     this.lastTimeStamp = Date.now();
 
-    this.heightmap.display(this.ctx);
+    if(this.lastBrushArea !== null) {
+      this.clear(this.lastBrushArea);
+      this.displayMap(this.lastBrushArea);
+    }
 
-    this.clear(this.lastBrushArea);
-    this.lastBrushArea = this.brush.preview(
-      this.ctx,
-      this.mousePosition.x,
-      this.mousePosition.y
-    );
+    if(this.mousePosition !== null) {
+      this.lastBrushArea = this.brush.preview(
+        this.ctx,
+        this.mousePosition.x,
+        this.mousePosition.y
+      );
+    }
 
     requestAnimationFrame(() => this.update());
   }
@@ -69,6 +77,10 @@ export class GameManager {
     };
   }
 
+  displayMap(area) {
+    this.heightmap.displayLimited(this.ctx, area.x, area.y, area.w, area.h);
+  }
+
   resizeCanvas() {
     const size = this.rect;
     this.canvas.width = size.width;
@@ -76,9 +88,7 @@ export class GameManager {
   }
 
   clear(area) {
-    if (area != null) {
-      this.ctx.clearRect(area.x, area.y, area.w, area.h);
-    }
+    this.ctx.clearRect(area.x, area.y, area.w, area.h);
   }
   clearAll() {
     const size = this.rect;

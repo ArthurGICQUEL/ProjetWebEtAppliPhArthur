@@ -3,7 +3,7 @@ const waterColor = "#4287f5";
 
 export class Heightmap {
   constructor(height, width, maxDepth) {
-    this.pixelSize = 3;
+    this.pixelSize = 1;
     this.height = height * this.pixelSize;
     this.width = width * this.pixelSize;
     this.maxDepth = maxDepth;
@@ -40,9 +40,13 @@ export class Heightmap {
    *
    * @param {CanvasRenderingContext2D} ctx
    */
-  display(ctx, x, y, w, h) {
+  displayLimited(ctx, x, y, w, h) {
     for (let i = x; i < x + w; i++) {
       for (let j = y; j < y + h; j++) {
+        if(!this.checkCoord(i, j)) {
+          continue;
+        }
+        //console.log(this.pixels[i] + " - " + this.pixels[i][j]);
         ctx.fillStyle =
           this.pixels[i][j].water > 0
             ? waterColor
@@ -140,7 +144,7 @@ export class Heightmap {
   }
 
   checkCoord(x, y) {
-    return x <= this.width && x >= 0 && y <= this.height && y >= 0;
+    return x < this.width && x >= 0 && y < this.height && y >= 0;
   }
 
   saveMap() {

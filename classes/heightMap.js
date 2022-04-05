@@ -36,6 +36,30 @@ export class Heightmap {
       }
     }
   }
+  /**
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  display(ctx, x, y, w, h) {
+    for (let i = x; i < x + w; i++) {
+      for (let j = y; j < y + h; j++) {
+        ctx.fillStyle =
+          this.pixels[i][j].water > 0
+            ? waterColor
+            : this.lerpColor(
+                colors[0],
+                colors[1],
+                this.pixels[i][j].terrain / this.maxDepth
+              );
+        ctx.fillRect(
+          this.pixelSize * i,
+          this.pixelSize * j,
+          this.pixelSize,
+          this.pixelSize
+        );
+      }
+    }
+  }
 
   waterBehavior() {
     for (let x = 0; x < this.pixels.length; x++) {
@@ -43,6 +67,7 @@ export class Heightmap {
         let lowerPoints = this.getLowerPoints();
         if (lowerPoints.length == 0) return;
         lowerPoints[Math.random(0, lowerPoints.length)].water++;
+        pixels[x][y].water--;
       }
     }
   }

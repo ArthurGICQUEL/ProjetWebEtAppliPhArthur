@@ -9,7 +9,7 @@ export class Heightmap {
     this.maxDepth = maxDepth;
     this.pixels = [];
     for (let x = 0; x < width; x++) {
-      const col = [];
+      let col = [];
       for (let y = 0; y < height; y++) {
         col.push({ terrain: this.maxDepth / 2, water: 0 });
       }
@@ -49,9 +49,12 @@ export class Heightmap {
     for (let i = x; i < x + w; i++) {
       for (let j = y; j < y + h; j++) {
         if(!this.checkCoord(i, j)) {
+          //console.log("(" + i + "," + j + ") : incorrect");
           continue;
+        } else {
+          //console.log("(" + i + "," + j + ") : correct");
         }
-        //console.log(this.pixels[i] + " - " + this.pixels[i][j]);
+        //console.log((this.pixels[i] !== undefined) + " - " + this.pixels[i][j]);
         ctx.fillStyle =
           this.pixels[i][j].water > 0
             ? waterColor
@@ -86,6 +89,16 @@ export class Heightmap {
       for (let j = -radius; j <= radius; j++) {
         if (i * i + j * j <= radius * radius) {
           this.pixels[x + i][y + j].water = depth;
+        }
+      }
+    }
+  }
+  
+  applyInRadius(x, y, radius, callback) {
+    for (let i = -radius; i <= radius; i++) {
+      for (let j = -radius; j <= radius; j++) {
+        if (i * i + j * j <= radius * radius) {
+          callback(x + i, y + j, Math.sqrt(i * i + j * j));
         }
       }
     }
@@ -145,7 +158,11 @@ export class Heightmap {
   }
 
   changeTerrainHeight(x, y, delta) {
-    if (this.checkCoord(x, y)) this.pixels[x][y].terrain += delta;
+    if (this.checkCoord(x, y)) {
+      this.pixels[x][y].terrain += delta;
+      if(this.pixels[x][y].terrain < 0) this.pixels[x][y].terrain = 0;
+      else if(this.pixels[x][y].terrain > this.maxDepth) this.pixels[x][y].terrain = this.maxDepth;
+    }
   }
 
   checkCoord(x, y) {

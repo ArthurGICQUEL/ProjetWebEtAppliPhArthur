@@ -5,18 +5,21 @@ export class Brush {
    * 
    * @param {Heightmap} heightmap 
    * @param {String} previewColor 
-   * @param {Number} lineWidth 
+   * @param {Number} strength
+   * @param {Number} lineWidth
    */
-  constructor(heightmap, previewColor, lineWidth = 10) {
+  constructor(heightmap, previewColor, strength, lineWidth = 10) {
     this.heightmap = heightmap;
     this.setup(previewColor, lineWidth);
+    this.strength = strength
     this._radius = 0;
     this.shiftDown = false;
+
     window.addEventListener("keydown", (e) => {
-      if(e.shiftKey) this.shiftDown = true;
+      this.shiftDown = e.shiftKey;
     });
     window.addEventListener("keyup", (e) => {
-      if(e.shiftKey) this.shiftDown = false;
+      this.shiftDown = e.shiftKey;
     });
   }
 
@@ -27,13 +30,17 @@ export class Brush {
 
   /**
    * 
-   * @param {Number} n 
-   * @param {Number} height 
    * @param {Number} radius 
+   * @param {Number} maxRadius 
+   * @param {Number} maxDepth 
    * @returns 
    */
-  getCurve(n, height, radius) {
-    return height * Math.cos(Math.PI * n / radius);
+  getCurve(radius, maxRadius, maxDepth) {
+    return maxDepth * 0.5 * (1 + Math.cos(Math.PI * radius / maxRadius));
+  }
+
+  getHeight(deltaTime) {
+    return this.strength * deltaTime;
   }
 
   /**
@@ -49,10 +56,20 @@ export class Brush {
     ctx.beginPath();
     ctx.arc(x, y, this.radius, 0, 2 * Math.PI);
     ctx.stroke();
-    return {x: x - (this.radius + this.lineWidth * 0.5 + 1), y: y - (this.radius + this.lineWidth * 0.5 + 1), w: this.radius * 2 + this.lineWidth + 2, h: this.radius * 2 + this.lineWidth + 2};
+    return {
+      x: x - (this.radius + Math.round(this.lineWidth * 0.5) + 1), 
+      y: y - (this.radius + Math.round(this.lineWidth * 0.5) + 1), 
+      w: this.radius * 2 + this.lineWidth + 2, 
+      h: this.radius * 2 + this.lineWidth + 2
+    };
   }
 
-  apply() {
+  apply(x, y, depth) {
+    const trueDepth = (this.shiftDown ? -1 : 1) * depth;
+    this.heightmap.applyInRadius(x, y, this.radius, (x, y, r) => {
+      this.heightmap.changeTerrainHeight(x, y, this.getCurve(r, this.radius, trueDepth));
+    });
+
     console.log("Applied brush: " + (this.shiftDown ? "remove" : "add"));
   }
 

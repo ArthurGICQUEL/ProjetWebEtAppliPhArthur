@@ -19,6 +19,13 @@ export class GameManager {
     this.canvas.addEventListener("mousemove", (e) => {
       this.mousePosition = this.getMousePosition(e.clientX, e.clientY);
     });
+    this.isApplying = false;
+    this.canvas.addEventListener("mousedown", (e) => {
+      this.isApplying = true;
+    });
+    this.canvas.addEventListener("mouseup", (e) => {
+      this.isApplying = false;
+    });
 
     this.lastBrushArea = null;
 
@@ -37,8 +44,10 @@ export class GameManager {
     this.heightmap.addWater(50, 50, 20, 2);
     //console.log(this.heightmap);
 
-    this.brush = new Brush(this.heightmap, "black", 5);
-    this.brush.radius = 50;
+    this.brush = new Brush(this.heightmap, "black", 10, 5);
+    this.brush.radius = 60;
+
+    this.heightmap.display(this.ctx);
 
     this.lastTimeStamp = Date.now();
     this.update();
@@ -48,8 +57,16 @@ export class GameManager {
     const deltaTime = (Date.now() - this.lastTimeStamp) / 1000;
     this.lastTimeStamp = Date.now();
 
+    if(this.isApplying) {
+      this.brush.apply(
+        this.mousePosition.x,
+        this.mousePosition.y,
+        this.brush.getHeight(deltaTime)
+        );
+    }
+
     if(this.lastBrushArea !== null) {
-      this.clear(this.lastBrushArea);
+      //this.clear(this.lastBrushArea);
       this.displayMap(this.lastBrushArea);
     }
 
@@ -72,8 +89,8 @@ export class GameManager {
   getMousePosition(clientX, clientY) {
     const size = this.rect;
     return {
-      x: clientX - size.left,
-      y: clientY - size.top,
+      x: Math.round(clientX - size.left),
+      y: Math.round(clientY - size.top)
     };
   }
 

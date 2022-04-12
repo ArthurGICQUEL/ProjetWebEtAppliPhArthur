@@ -24,14 +24,7 @@ export class Heightmap {
   display(ctx) {
     for (let x = 0; x < this.pixels.length; x++) {
       for (let y = 0; y < this.pixels[x].length; y++) {
-        ctx.fillStyle =
-          this.pixels[x][y].water > 0
-            ? waterColor
-            : this.lerpColor(
-                colors[0],
-                colors[1],
-                this.pixels[x][y].terrain / this.maxDepth
-              );
+        ctx.fillStyle = this.getColor(this.pixels[x][y].terrain, this.pixels[x][y].water);
         ctx.fillRect(
           this.pixelSize * x,
           this.pixelSize * y,
@@ -55,14 +48,7 @@ export class Heightmap {
           //console.log("(" + i + "," + j + ") : correct");
         }
         //console.log((this.pixels[i] !== undefined) + " - " + this.pixels[i][j]);
-        ctx.fillStyle =
-          this.pixels[i][j].water > 0
-            ? waterColor
-            : this.lerpColor(
-                colors[0],
-                colors[1],
-                this.pixels[i][j].terrain / this.maxDepth
-              );
+        ctx.fillStyle = this.getColor(this.pixels[i][j].terrain, this.pixels[i][j].water);
         ctx.fillRect(
           this.pixelSize * i,
           this.pixelSize * j,
@@ -71,6 +57,19 @@ export class Heightmap {
         );
       }
     }
+  }
+
+  getColor(terrainDepth, waterDepth) {
+    if(waterDepth > 0) {
+      return waterColor;
+    }
+    const nbLvls = 15;
+    const terrainLevel = Math.floor((terrainDepth / this.maxDepth) * nbLvls) / nbLvls;
+    return this.lerpColor(
+      colors[0],
+      colors[1],
+      terrainLevel
+    );
   }
 
   /*waterBehavior() {

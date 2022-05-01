@@ -40,7 +40,7 @@ export class GameManager {
     }
 
     const size = this.rect;
-    this.heightmap = new Heightmap(size.height, size.width, 10);
+    this.heightmap = new Heightmap(size.height, size.width, 10, this.ctx);
     this.heightmap.addWater(500, 500, 20, 10);
     console.log(this.heightmap);
 

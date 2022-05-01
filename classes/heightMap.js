@@ -2,7 +2,8 @@ const colors = ["#12522e", "#a88977"];
 const waterColor = "#4287f5";
 
 export class Heightmap {
-  constructor(height, width, maxDepth) {
+  constructor(height, width, maxDepth, ctx) {
+    this.ctx = ctx;
     this.pixelSize = 1;
     this.height = height * this.pixelSize;
     this.width = width * this.pixelSize;
@@ -148,6 +149,7 @@ export class Heightmap {
           this.pixels[x][y].water--;
           lowestNeighbour.water++;
         }
+        this.displayLimited(this.ctx, x, y, 2, 2);
       }
     }
   }

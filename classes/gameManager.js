@@ -41,8 +41,8 @@ export class GameManager {
 
     const size = this.rect;
     this.heightmap = new Heightmap(size.height, size.width, 10);
-    this.heightmap.addWater(50, 50, 20, 2);
-    //console.log(this.heightmap);
+    this.heightmap.addWater(500, 500, 20, 10);
+    console.log(this.heightmap);
 
     this.brush = new Brush(this.heightmap, "black", 10, 5);
     this.brush.radius = 60;
@@ -57,28 +57,31 @@ export class GameManager {
     const deltaTime = (Date.now() - this.lastTimeStamp) / 1000;
     this.lastTimeStamp = Date.now();
 
-    if(this.isApplying) {
+    this.heightmap.waterBehavior();
+
+    if (this.isApplying) {
       this.brush.apply(
         this.mousePosition.x,
         this.mousePosition.y,
         this.brush.getHeight(deltaTime)
-        );
+      );
     }
 
-    if(this.lastBrushArea !== null) {
+    if (this.lastBrushArea !== null) {
       //this.clear(this.lastBrushArea);
       this.displayMap(this.lastBrushArea);
     }
 
-    if(this.mousePosition !== null) {
+    if (this.mousePosition !== null) {
       this.lastBrushArea = this.brush.preview(
         this.ctx,
         this.mousePosition.x,
         this.mousePosition.y
       );
     }
-
-    requestAnimationFrame(() => this.update());
+    setTimeout(() => {
+      requestAnimationFrame(() => this.update());
+    }, 33);
   }
 
   /**
@@ -90,7 +93,7 @@ export class GameManager {
     const size = this.rect;
     return {
       x: Math.round(clientX - size.left),
-      y: Math.round(clientY - size.top)
+      y: Math.round(clientY - size.top),
     };
   }
 
